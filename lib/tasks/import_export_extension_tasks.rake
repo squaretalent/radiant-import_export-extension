@@ -2,7 +2,7 @@ namespace :db do
   desc "Import a database template from db/export.yml. Specify the TEMPLATE environment variable to load a different template. This is not intended for new installations, but restoration from previous exports."
   task :import do
     require 'highline/import'
-    say "ERROR: Specify a template to load with the TEMPLATE environment variable." and exit unless (ENV['TEMPLATE'] and File.exists?(ENV['TEMPLATE']))
+    
     Rake::Task["db:schema:load"].invoke
     # Use what Radiant::Setup for the heavy lifting
     require 'radiant/setup'
@@ -10,7 +10,7 @@ namespace :db do
     setup = Radiant::Setup.new
     
     # Load the data from the export file
-    data = YAML.load_file(ENV['TEMPLATE'] || "#{RAILS_ROOT}/db/export.yml")
+    data = YAML.load_file("#{RAILS_ROOT}/db/data.yml")
     
     # Load the users first so created_by fields can be updated
     users_only = {'records' => {'Users' => data['records'].delete('Users')}}
@@ -43,9 +43,9 @@ namespace :db do
     setup.send :create_records, data
   end
   
-  desc "Export a database template to db/export_TIME.yml. Specify the TEMPLATE environment variable to use a different file."
-  task :export => ["db:schema:dump"] do
-    template_name = ENV['TEMPLATE'] || "#{RAILS_ROOT}/db/export_#{Time.now.utc.strftime("%Y%m%d%H%M%S")}.yml"
-    File.open(template_name, "w") {|f| f.write Exporter.export }
+  desc "Export a database template to db/data.yml"
+  task :export do
+    Rake::Task["db:schema:dump"].invoke
+    File.open("#{RAILS_ROOT}/db/data.yml", "w") {|f| f.write Exporter.export }
   end
 end

@@ -3,14 +3,18 @@
 Supports a more enhanced version of exporting your Radiant database, and 
 adds the ability to import the results of an export operation.
 
+This extension will export the schema_migrations table, meaning future 
+extension migrations are seamless
+
+Updated to use db/data.yml, following what yaml_db does
+
 To import use: 
 
- $ rake db:import [TEMPLATE=path/to/export.yml]
+ $ rake db:import
 
 To export, browse to /admin/export or use:
 
- $ rake db:export [TEMPLATE=path/to/export.yml]
+ $ rake db:export
  
-
 by Sean Cribbs
    April 18, 2007

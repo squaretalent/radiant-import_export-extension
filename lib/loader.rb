@@ -5,7 +5,6 @@ module Loader
   # with the table: 'my_data')
   def models_from_database
     tables = ActiveRecord::Base.connection.tables
-    tables.delete "config"
     models = tables.collect { |table| table.camelize.singularize.constantize rescue nil || table.camelize.constantize rescue nil }.compact
     models << Radiant::Config
   end
